@@ -1,7 +1,15 @@
+import 'package:ecoland_application/providers/user_settings_provider.dart';
+import 'package:ecoland_application/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => UserSettingsProvider())
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -11,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Ecoland',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -31,7 +39,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: SignupScreen(),
+      routes: {
+        "/sign-up": (context) => SignupScreen(),
+        "/sign-in": (context) => MyHomePage(title: "title")
+      },
     );
   }
 }
