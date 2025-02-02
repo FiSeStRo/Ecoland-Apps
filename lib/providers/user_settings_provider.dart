@@ -16,10 +16,10 @@ class UserSettingsProvider with ChangeNotifier {
   get accessToken => _accessToken;
   get refreshToken => _refreshToken;
 
-  void setAccessToken(String token) {
-    _accessToken = token;
+  void setAccessToken(String at, String rt) {
+    _accessToken = at;
     notifyListeners();
-
+    _refreshToken = rt;
     _refreshTokenTimer?.cancel();
     _refreshTokenTimer = Timer.periodic(
       const Duration(minutes: 10),
@@ -35,10 +35,9 @@ class UserSettingsProvider with ChangeNotifier {
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
-      final accessToken = responseBody['accessToken'];
-      final refreshToken = responseBody['refreshToken'];
-      _refreshToken = refreshToken;
-      setAccessToken(accessToken);
+      final at = responseBody['accessToken'];
+      final rt = responseBody['refreshToken'];
+      setAccessToken(at, rt);
       return true;
     } else {
       throw Exception('Failed to sign in');
@@ -53,10 +52,9 @@ class UserSettingsProvider with ChangeNotifier {
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
-      final accessToken = responseBody['accessToken'];
-      final refreshToken = responseBody['refreshToken'];
-      _refreshToken = refreshToken;
-      setAccessToken(accessToken);
+      final at = responseBody['accessToken'];
+      final rt = responseBody['refreshToken'];
+      setAccessToken(at, rt);
     } else {
       throw Exception('Failed to refresh token');
     }
