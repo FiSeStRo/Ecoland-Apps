@@ -41,17 +41,19 @@ class _SignupScreenState extends State<SignupScreen> {
             TextField(
               controller: _confirmPasswordController,
               decoration: const InputDecoration(labelText: 'Confirm Password'),
+              obscureText: true,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
+                final navigator = Navigator.of(context);
                 if (_confirmPasswordController.text ==
                     _passwordController.text) {
                   bool success = await signUp(_usernameController.text,
                       _emailController.text, _passwordController.text);
                   if (success) {
                     if (!mounted) return;
-                    Navigator.pushReplacementNamed(context, '/sign-in');
+                    navigator.pushReplacementNamed('/sign-in');
                   }
                 }
               },

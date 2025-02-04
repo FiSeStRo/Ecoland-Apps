@@ -1,4 +1,5 @@
 import 'package:ecoland_application/providers/user_settings_provider.dart';
+import 'package:ecoland_application/screens/sign_in_screen.dart';
 import 'package:ecoland_application/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,10 +40,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SignupScreen(),
+      home: SignInScreen(),
       routes: {
         "/sign-up": (context) => SignupScreen(),
-        "/sign-in": (context) => MyHomePage(title: "title")
+        "/sign-in": (context) => SignInScreen(),
+        "/overview": (context) => MyHomePage(title: "title")
       },
     );
   }
