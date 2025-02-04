@@ -5,8 +5,6 @@ import 'package:ecoland_application/providers/api/config.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
-const baseUrl = AppConfig.baseUrl;
-
 class UserSettingsProvider with ChangeNotifier {
   String _accessToken = '';
   String _refreshToken = '';
@@ -27,26 +25,34 @@ class UserSettingsProvider with ChangeNotifier {
     );
   }
 
-  Future<bool> signIn(String url, String username, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/authentication/sign-in'),
-      body: {'username': username, 'password': password},
-    );
+  Future<bool> signIn(String username, String password) async {
+    bool success = false;
+    final object = {'username': username, 'password': password};
+    print(AppConfig.baseUrl);
+    try {
 
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      final at = responseBody['accessToken'];
-      final rt = responseBody['refreshToken'];
-      setAccessToken(at, rt);
-      return true;
-    } else {
-      throw Exception('Failed to sign in');
+      final response = await http.post(
+        Uri.parse('${AppConfig.baseUrl}/authentication/sign-in'),
+        body: jsonEncode(object),
+      );
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        final at = responseBody['accessToken'];
+        final rt = responseBody['refreshToken'];
+        setAccessToken(at, rt);
+        success = true;
+      } else {
+        throw Exception('Failed to sign in');
+      }
+    } catch (e) {
+      throw Exception("Call failed");
     }
+    return success;
   }
 
   Future<void> _refreshAccessToken() async {
     final response = await http.post(
-      Uri.parse('$baseUrl/authentication/refresh-token'),
+      Uri.parse('${AppConfig.baseUrl}/authentication/refresh-token'),
       headers: {'Authorization': 'Bearer $_refreshToken'},
     );
 
