@@ -25,9 +25,11 @@ class _SignInScreenState extends State<SignInScreen> {
             children: <Widget>[
               TextField(
                 controller: _usernameController,
+                decoration: const InputDecoration(labelText: 'Username'),
               ),
               TextField(
                 controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Password  '),
               ),
               const SizedBox(
                 height: 20,
