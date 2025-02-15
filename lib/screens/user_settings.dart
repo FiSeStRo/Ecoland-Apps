@@ -1,4 +1,6 @@
+import 'package:ecoland_application/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UserSettingsScreen extends StatefulWidget {
   const UserSettingsScreen({super.key});
@@ -12,12 +14,41 @@ class __UserSettingsScreenStateState extends State<UserSettingsScreen> {
   String _username = '';
   String _email = '';
   String _password = '';
+  String _newPassword = '';
 
-  void _saveChanges() {
+  @override
+  void initState() {
+    super.initState();
+    // Load user settings after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider =
+          Provider.of<UserSettingsProvider>(context, listen: false);
+      final success = await provider.LoadUserSettings();
+      if (success) {
+        setState(() {
+          _username = provider.userName;
+          _email = provider.eMail;
+        });
+      }
+    });
+  }
+
+  void _saveChanges() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // Handle save changes logic here
-      print('Username: $_username, Email: $_email, Password: $_password');
+      final provider =
+          Provider.of<UserSettingsProvider>(context, listen: false);
+      final success = await provider.UpdateUserSettings(
+          username: _username,
+          oldPassword: _password,
+          newPassword: _newPassword,
+          eMail: _email);
+      if (success) {
+        setState(() {
+          _username = provider.userName;
+          _email = provider.eMail;
+        });
+      }
     }
   }
 
@@ -38,6 +69,7 @@ class __UserSettingsScreenStateState extends State<UserSettingsScreen> {
           child: Column(
             children: [
               TextFormField(
+                initialValue: _username,
                 decoration: InputDecoration(labelText: 'Username'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -50,6 +82,7 @@ class __UserSettingsScreenStateState extends State<UserSettingsScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _email,
                 decoration: InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -65,8 +98,26 @@ class __UserSettingsScreenStateState extends State<UserSettingsScreen> {
                 decoration: InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
+                  if (value != null) {
+                    if (_password.isNotEmpty && _password != _newPassword) {
+                      return "Passwords do not match";
+                    }
+                  }
+
+                  return null;
+                },
+                onSaved: (value) {
+                  _password = value!;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'NewPassword'),
+                obscureText: true,
+                validator: (value) {
+                  if (value != null) {
+                    if (_password.isNotEmpty && _password != _newPassword) {
+                      return "Passwords do not match";
+                    }
                   }
                   return null;
                 },

@@ -16,10 +16,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
         title: const Text("Ovierview"),
         actions: [
           ElevatedButton.icon(
-            onPressed: () => {
-              //ToDO add go to UserSettings Page
-              Navigator.pushNamed(context, Routes.userSettings)
-            },
+            onPressed: () =>
+                {Navigator.pushNamed(context, Routes.userSettings)},
             label: const Text("Settings"),
             icon: Icon(Icons.settings),
           )
