@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:ecoland_application/providers/api/config.dart';
 import 'package:ecoland_application/providers/api/user_settings_api.dart';
 import 'package:http/http.dart' as http;
@@ -76,7 +74,7 @@ class UserSettingsProvider with ChangeNotifier {
 
   Future<bool> LoadUserSettings() async {
     try {
-      final settings = await UserSettings.fetchUserSettings(_accessToken);
+      final settings = await UserSettingsApi.fetchUserSettings(_accessToken);
       if (settings.username.isNotEmpty) _userName = settings.username;
       if (settings.email.isNotEmpty) _eMail = settings.email;
       return true;
@@ -92,7 +90,7 @@ class UserSettingsProvider with ChangeNotifier {
     String? eMail,
   }) async {
     try {
-      final settings = await UserSettings.patchUserSettings(
+      final settings = await UserSettingsApi.patchUserSettings(
         _accessToken,
         username: username,
         newPassword: newPassword,

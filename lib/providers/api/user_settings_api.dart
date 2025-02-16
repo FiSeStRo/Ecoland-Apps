@@ -3,26 +3,26 @@ import 'dart:convert';
 import 'package:ecoland_application/providers/api/config.dart';
 import 'package:http/http.dart';
 
-class UserSettings {
+class UserSettingsApi {
   final String email;
   final String id;
   final String username;
 
-  UserSettings({
+  UserSettingsApi({
     required this.email,
     required this.id,
     required this.username,
   });
 
-  factory UserSettings.fromJson(Map<String, dynamic> json) {
-    return UserSettings(
+  factory UserSettingsApi.fromJson(Map<String, dynamic> json) {
+    return UserSettingsApi(
       email: json['email'],
       id: json['id'],
       username: json['username'],
     );
   }
 
-  static Future<UserSettings> fetchUserSettings(String accessToken) async {
+  static Future<UserSettingsApi> fetchUserSettings(String accessToken) async {
     final url = '${AppConfig.baseUrl}/user/info';
     Response response = await get(
       Uri.parse(url),
@@ -30,13 +30,13 @@ class UserSettings {
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final Map<String, dynamic> decodedJson = jsonDecode(response.body);
-      return UserSettings.fromJson(decodedJson);
+      return UserSettingsApi.fromJson(decodedJson);
     } else {
       throw Exception('Failed to load user settings');
     }
   }
 
-  static Future<UserSettings> patchUserSettings(
+  static Future<UserSettingsApi> patchUserSettings(
     String accessToken, {
     String? username,
     String? newPassword,
@@ -56,7 +56,7 @@ class UserSettings {
         body: jsonEncode(body));
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final Map<String, dynamic> decodedJson = jsonDecode(response.body);
-      return UserSettings.fromJson(decodedJson);
+      return UserSettingsApi.fromJson(decodedJson);
     } else {
       throw Exception('Failed to update user settings');
     }
