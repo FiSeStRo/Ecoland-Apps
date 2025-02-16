@@ -6,49 +6,60 @@ class UserSettingsScreen extends StatefulWidget {
   const UserSettingsScreen({super.key});
 
   @override
-  State<UserSettingsScreen> createState() => __UserSettingsScreenStateState();
+  State<UserSettingsScreen> createState() => _UserSettingsScreenState();
 }
 
-class __UserSettingsScreenStateState extends State<UserSettingsScreen> {
+class _UserSettingsScreenState extends State<UserSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _username = '';
-  String _email = '';
-  String _password = '';
-  String _newPassword = '';
+
+  late TextEditingController _usernameController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _newPasswordController;
 
   @override
   void initState() {
     super.initState();
-    // Load user settings after the first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider =
-          Provider.of<UserSettingsProvider>(context, listen: false);
-      final success = await provider.LoadUserSettings();
-      if (success) {
-        setState(() {
-          _username = provider.userName;
-          _email = provider.eMail;
-        });
-      }
-    });
+    _usernameController = TextEditingController();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _newPasswordController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final userSettings =
+        Provider.of<UserSettingsProvider>(context, listen: false);
+    _usernameController.text = userSettings.userName;
+    _emailController.text = userSettings.eMail;
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _newPasswordController.dispose();
+    super.dispose();
   }
 
   void _saveChanges() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
       final provider =
           Provider.of<UserSettingsProvider>(context, listen: false);
-      final success = await provider.UpdateUserSettings(
-          username: _username,
-          oldPassword: _password,
-          newPassword: _newPassword,
-          eMail: _email);
+      final success = await provider.updateUserSettings(
+        username: _usernameController.text,
+        oldPassword: _passwordController.text,
+        newPassword: _newPasswordController.text,
+        eMail: _emailController.text,
+      );
+
       if (success) {
-        setState(() {
-          _username = provider.userName;
-          _email = provider.eMail;
-        });
+        _usernameController.text = provider.userName;
+        _emailController.text = provider.eMail;
       }
+      print('success: $success');
     }
   }
 
@@ -60,7 +71,7 @@ class __UserSettingsScreenStateState extends State<UserSettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Details'),
+        title: const Text('User Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -69,73 +80,60 @@ class __UserSettingsScreenStateState extends State<UserSettingsScreen> {
           child: Column(
             children: [
               TextFormField(
-                initialValue: _username,
-                decoration: InputDecoration(labelText: 'Username'),
+                controller: _usernameController,
+                decoration: const InputDecoration(labelText: 'Username'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a username';
                   }
                   return null;
                 },
-                onSaved: (value) {
-                  _username = value!;
-                },
               ),
               TextFormField(
-                initialValue: _email,
-                decoration: InputDecoration(labelText: 'Email'),
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter an email';
                   }
                   return null;
                 },
-                onSaved: (value) {
-                  _email = value!;
-                },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Password'),
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
-                  if (value != null) {
-                    if (_password.isNotEmpty && _password != _newPassword) {
-                      return "Passwords do not match";
-                    }
-                  }
-
-                  return null;
-                },
-                onSaved: (value) {
-                  _password = value!;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'NewPassword'),
-                obscureText: true,
-                validator: (value) {
-                  if (value != null) {
-                    if (_password.isNotEmpty && _password != _newPassword) {
-                      return "Passwords do not match";
-                    }
+                  if (_passwordController.text.isNotEmpty &&
+                      _passwordController.text != _newPasswordController.text) {
+                    return "Passwords do not match";
                   }
                   return null;
                 },
-                onSaved: (value) {
-                  _password = value!;
+              ),
+              TextFormField(
+                controller: _newPasswordController,
+                decoration: const InputDecoration(labelText: 'New Password'),
+                obscureText: true,
+                validator: (value) {
+                  if (_passwordController.text.isNotEmpty &&
+                      _passwordController.text != _newPasswordController.text) {
+                    return "Passwords do not match";
+                  }
+                  return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
                     onPressed: _saveChanges,
-                    child: Text('Save Changes'),
+                    child: const Text('Save Changes'),
                   ),
                   ElevatedButton(
                     onPressed: _cancel,
-                    child: Text('Cancel'),
+                    child: const Text('Cancel'),
                   ),
                 ],
               ),

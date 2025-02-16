@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 class UserSettingsProvider with ChangeNotifier {
   String _accessToken = '';
   String _refreshToken = '';
+  int _id = 0;
   int refreshTime = 10;
   Timer? _refreshTokenTimer;
 
@@ -21,10 +22,11 @@ class UserSettingsProvider with ChangeNotifier {
   get refreshToken => _refreshToken;
   get userName => _userName;
   get eMail => _eMail;
+  get id => _id;
   void setAccessToken(String at, String rt) {
     _accessToken = at;
-    notifyListeners();
     _refreshToken = rt;
+    notifyListeners();
     _refreshTokenTimer?.cancel();
     _refreshTokenTimer = Timer.periodic(
       const Duration(minutes: 10),
@@ -43,8 +45,13 @@ class UserSettingsProvider with ChangeNotifier {
       );
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
+        print("resBody ${responseBody['id']}");
         final at = responseBody['accessToken'];
         final rt = responseBody['refreshToken'];
+        _userName = username;
+        _id = responseBody['id'];
+        notifyListeners();
+        print("Id set to $_id");
         setAccessToken(at, rt);
         success = true;
       } else {
@@ -72,9 +79,13 @@ class UserSettingsProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> LoadUserSettings() async {
+  Future<bool> loadUserSettings() async {
     try {
-      final settings = await UserSettingsApi.fetchUserSettings(_accessToken);
+      print("loadUserSettings");
+      print("id $_id");
+      print("$_accessToken");
+      final settings =
+          await UserSettingsApi.fetchUserSettings(_accessToken, _id);
       if (settings.username.isNotEmpty) _userName = settings.username;
       if (settings.email.isNotEmpty) _eMail = settings.email;
       return true;
@@ -83,20 +94,23 @@ class UserSettingsProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> UpdateUserSettings({
+  Future<bool> updateUserSettings({
     String? username,
     String? newPassword,
     String? oldPassword,
     String? eMail,
   }) async {
     try {
+      print("udateUserSettings");
       final settings = await UserSettingsApi.patchUserSettings(
         _accessToken,
+        _id,
         username: username,
         newPassword: newPassword,
         oldPassword: oldPassword,
         eMail: eMail,
       );
+      print("userName ${settings.username}");
       if (settings.username.isNotEmpty) _userName = settings.username;
       if (settings.email.isNotEmpty) _eMail = settings.email;
       return true;
