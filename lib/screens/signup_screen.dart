@@ -1,3 +1,4 @@
+import 'package:ecoland_application/navigation/routes.dart';
 import 'package:ecoland_application/providers/api/authentication.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +54,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       _emailController.text, _passwordController.text);
                   if (success) {
                     if (!mounted) return;
-                    navigator.pushReplacementNamed('/sign-in');
+                    navigator.pushReplacementNamed(Routes.signIn);
                   }
                 }
               },

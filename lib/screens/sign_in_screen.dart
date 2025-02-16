@@ -1,3 +1,4 @@
+import 'package:ecoland_application/navigation/routes.dart';
 import 'package:ecoland_application/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +46,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     bool signedIn = await UserSettingsProvider().signIn(
                         _usernameController.text, _passwordController.text);
                     if (signedIn) {
-                      navigator.popAndPushNamed("/overview");
+                      navigator.popAndPushNamed(Routes.overview);
                     } else {
                       print("could not login");
                     }

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:ecoland_application/providers/api/config.dart';
+import 'package:ecoland_application/providers/api/user_settings_api.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -10,10 +10,17 @@ class UserSettingsProvider with ChangeNotifier {
   String _refreshToken = '';
   int refreshTime = 10;
   Timer? _refreshTokenTimer;
+
+  //UserSettings
+  String _userName = '';
+  String _eMail = '';
+
   // Getters
+
   get accessToken => _accessToken;
   get refreshToken => _refreshToken;
-
+  get userName => _userName;
+  get eMail => _eMail;
   void setAccessToken(String at, String rt) {
     _accessToken = at;
     notifyListeners();
@@ -30,7 +37,6 @@ class UserSettingsProvider with ChangeNotifier {
     final object = {'username': username, 'password': password};
     print(AppConfig.baseUrl);
     try {
-
       final response = await http.post(
         Uri.parse('${AppConfig.baseUrl}/authentication/sign-in'),
         body: jsonEncode(object),
@@ -63,6 +69,39 @@ class UserSettingsProvider with ChangeNotifier {
       setAccessToken(at, rt);
     } else {
       throw Exception('Failed to refresh token');
+    }
+  }
+
+  Future<bool> LoadUserSettings() async {
+    try {
+      final settings = await UserSettingsApi.fetchUserSettings(_accessToken);
+      if (settings.username.isNotEmpty) _userName = settings.username;
+      if (settings.email.isNotEmpty) _eMail = settings.email;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> UpdateUserSettings({
+    String? username,
+    String? newPassword,
+    String? oldPassword,
+    String? eMail,
+  }) async {
+    try {
+      final settings = await UserSettingsApi.patchUserSettings(
+        _accessToken,
+        username: username,
+        newPassword: newPassword,
+        oldPassword: oldPassword,
+        eMail: eMail,
+      );
+      if (settings.username.isNotEmpty) _userName = settings.username;
+      if (settings.email.isNotEmpty) _eMail = settings.email;
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
