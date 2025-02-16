@@ -1,6 +1,7 @@
 import 'package:ecoland_application/navigation/routes.dart';
 import 'package:ecoland_application/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -16,6 +17,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final userSettings = Provider.of<UserSettingsProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("SignIn"),
@@ -43,7 +45,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       //ToDo: Show error username or password can't be empty
                       return;
                     }
-                    bool signedIn = await UserSettingsProvider().signIn(
+                    bool signedIn = await userSettings.signIn(
                         _usernameController.text, _passwordController.text);
                     if (signedIn) {
                       navigator.popAndPushNamed(Routes.overview);

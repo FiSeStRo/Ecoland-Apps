@@ -22,14 +22,18 @@ class UserSettingsApi {
     );
   }
 
-  static Future<UserSettingsApi> fetchUserSettings(String accessToken) async {
-    final url = '${AppConfig.baseUrl}/user/info';
+  static Future<UserSettingsApi> fetchUserSettings(
+      String accessToken, int id) async {
+    final uri = Uri.parse('${AppConfig.baseUrl}/user/info')
+        .replace(queryParameters: {"id": id});
+    print("fetching userSettings from ${uri}");
     Response response = await get(
-      Uri.parse(url),
+      uri,
       headers: {'Authorization': 'Bearer $accessToken'},
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final Map<String, dynamic> decodedJson = jsonDecode(response.body);
+      print('decoded json user settigns ${decodedJson}');
       return UserSettingsApi.fromJson(decodedJson);
     } else {
       throw Exception('Failed to load user settings');
@@ -37,28 +41,39 @@ class UserSettingsApi {
   }
 
   static Future<UserSettingsApi> patchUserSettings(
-    String accessToken, {
+    String accessToken,
+    int id, {
     String? username,
     String? newPassword,
     String? oldPassword,
     String? eMail,
   }) async {
-    final url = '${AppConfig.baseUrl}/user/info';
-    final body = <String, dynamic>{};
+    print("Patch UserSettings");
+    try {
+      final url = '${AppConfig.baseUrl}/user/info';
+      final body = <String, dynamic>{};
 
-    if (username != null) body['username'] = username;
-    if (newPassword != null) body['newPassword'] = newPassword;
-    if (oldPassword != null) body['oldPassword'] = oldPassword;
-    if (eMail != null) body['eMail'] = eMail;
-
-    Response response = await patch(Uri.parse(url),
-        headers: {'Authorization': 'Bearer $accessToken'},
-        body: jsonEncode(body));
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final Map<String, dynamic> decodedJson = jsonDecode(response.body);
-      return UserSettingsApi.fromJson(decodedJson);
-    } else {
-      throw Exception('Failed to update user settings');
+      if (username != null) body['username'] = username;
+      if (newPassword != null) body['newPassword'] = newPassword;
+      if (oldPassword != null) body['oldPassword'] = oldPassword;
+      if (eMail != null) body['eMail'] = eMail;
+      body["id"] = id;
+      print("reqBody${jsonEncode(body)}");
+      print("url $url");
+      print("accessToken $accessToken");
+      final response = await patch(Uri.parse(url),
+          headers: {'Authorization': 'Bearer $accessToken'},
+          body: jsonEncode(body));
+      print("responseStatus ${response.statusCode}");
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Map<String, dynamic> decodedJson = jsonDecode(response.body);
+        return UserSettingsApi.fromJson(decodedJson);
+      } else {
+        throw Exception('Failed to update user settings');
+      }
+    } catch (e) {
+      print("failed with $e");
+      throw Exception("Failed to call api");
     }
   }
 }
