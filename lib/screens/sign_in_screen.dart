@@ -1,3 +1,4 @@
+import 'package:ecoland_application/components/notification.dart';
 import 'package:ecoland_application/navigation/routes.dart';
 import 'package:ecoland_application/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
@@ -45,12 +46,17 @@ class _SignInScreenState extends State<SignInScreen> {
                       //ToDo: Show error username or password can't be empty
                       return;
                     }
-                    bool signedIn = await userSettings.signIn(
-                        _usernameController.text, _passwordController.text);
-                    if (signedIn) {
-                      navigator.popAndPushNamed(Routes.overview);
-                    } else {
+                    try {
+                      bool signedIn = await userSettings.signIn(
+                          _usernameController.text, _passwordController.text);
+                      if (signedIn) {
+                        navigator.popAndPushNamed(Routes.overview);
+                      }
+                    } catch (e) {
                       print("could not login");
+                      showCustomNotification(context,
+                          message: "could not login!",
+                          type: NotificationType.error);
                     }
                   },
                   child: const Text("Sign In")),

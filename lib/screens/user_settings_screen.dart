@@ -1,3 +1,4 @@
+import 'package:ecoland_application/components/notification.dart';
 import 'package:ecoland_application/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,12 +55,21 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
         newPassword: _newPasswordController.text,
         eMail: _emailController.text,
       );
-
+      print('success: $success');
+      if (!mounted) return;
       if (success) {
+        showCustomNotification(context,
+            message: "Successfully Updated Settings",
+            type: NotificationType.success,
+            durationInSeconds: 10);
         _usernameController.text = provider.userName;
         _emailController.text = provider.eMail;
+      } else {
+        showCustomNotification(context,
+            message: "Error updating Settings",
+            type: NotificationType.error,
+            durationInSeconds: 10);
       }
-      print('success: $success');
     }
   }
 
