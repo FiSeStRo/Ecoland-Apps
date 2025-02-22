@@ -1,4 +1,5 @@
 import 'package:ecoland_application/navigation/routes.dart';
+import 'package:ecoland_application/providers/buildings_provider.dart';
 import 'package:ecoland_application/providers/user_settings_provider.dart';
 import 'package:ecoland_application/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,8 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (context) => UserSettingsProvider())
+      ChangeNotifierProvider(create: (context) => UserSettingsProvider()),
+      ChangeNotifierProvider(create: (context) => BuildingsProvider())
     ],
     child: const MyApp(),
   ));

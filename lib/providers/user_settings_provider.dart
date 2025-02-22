@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:ecoland_application/providers/api/config.dart';
 import 'package:ecoland_application/providers/api/user_settings_api.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -34,13 +33,13 @@ class UserSettingsProvider with ChangeNotifier {
     );
   }
 
+  //TODO: create authentication provider and move api calls to authentication api
   Future<bool> signIn(String username, String password) async {
     bool success = false;
     final object = {'username': username, 'password': password};
-    print(AppConfig.baseUrl);
     try {
       final response = await http.post(
-        Uri.parse('${AppConfig.baseUrl}/authentication/sign-in'),
+        Uri.parse('/authentication/sign-in'),
         body: jsonEncode(object),
       );
       if (response.statusCode == 200) {
@@ -65,7 +64,7 @@ class UserSettingsProvider with ChangeNotifier {
 
   Future<void> _refreshAccessToken() async {
     final response = await http.post(
-      Uri.parse('${AppConfig.baseUrl}/authentication/refresh-token'),
+      Uri.parse('/authentication/refresh-token'),
       headers: {'Authorization': 'Bearer $_refreshToken'},
     );
 
@@ -84,8 +83,7 @@ class UserSettingsProvider with ChangeNotifier {
       print("loadUserSettings");
       print("id $_id");
       print("$_accessToken");
-      final settings =
-          await UserSettingsApi.fetchUserSettings(_accessToken, _id);
+      final settings = await UserSettingsApi.fetchUserSettings(_id);
       if (settings.username.isNotEmpty) _userName = settings.username;
       if (settings.email.isNotEmpty) _eMail = settings.email;
       return true;

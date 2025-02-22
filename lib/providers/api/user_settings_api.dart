@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:ecoland_application/providers/api/config.dart';
-import 'package:http/http.dart';
+import 'package:ecoland_application/providers/api/api.dart';
 
 class UserSettingsApi {
   final String email;
@@ -22,18 +21,14 @@ class UserSettingsApi {
     );
   }
 
-  static Future<UserSettingsApi> fetchUserSettings(
-      String accessToken, int id) async {
-    final uri = Uri.parse('${AppConfig.baseUrl}/user/info')
-        .replace(queryParameters: {"id": id});
-    print("fetching userSettings from ${uri}");
-    Response response = await get(
-      uri,
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final Map<String, dynamic> decodedJson = jsonDecode(response.body);
-      print('decoded json user settigns ${decodedJson}');
+  static Future<UserSettingsApi> fetchUserSettings(int id) async {
+    print("fetching userSettings from");
+    final response = await ApiClient().get('/user/info', query: {"id": id});
+    if (response.statusCode != null &&
+        response.statusCode! >= 200 &&
+        response.statusCode! < 300) {
+      final Map<String, dynamic> decodedJson = jsonDecode(response.data);
+      print('decoded json user settigns $decodedJson');
       return UserSettingsApi.fromJson(decodedJson);
     } else {
       throw Exception('Failed to load user settings');
@@ -50,30 +45,30 @@ class UserSettingsApi {
   }) async {
     print("Patch UserSettings");
     try {
-      final url = '${AppConfig.baseUrl}/user/info';
-      final body = <String, dynamic>{};
+      final data = <String, dynamic>{};
 
-      if (username != null) body['username'] = username;
-      if (newPassword != null) body['newPassword'] = newPassword;
-      if (oldPassword != null) body['oldPassword'] = oldPassword;
-      if (eMail != null) body['eMail'] = eMail;
-      body["id"] = id;
-      print("reqBody${jsonEncode(body)}");
-      print("url $url");
-      print("accessToken $accessToken");
-      final response = await patch(Uri.parse(url),
-          headers: {'Authorization': 'Bearer $accessToken'},
-          body: jsonEncode(body));
-      print("responseStatus ${response.statusCode}");
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final Map<String, dynamic> decodedJson = jsonDecode(response.body);
-        return UserSettingsApi.fromJson(decodedJson);
+      if (username != null) data['username'] = username;
+      if (newPassword != null) data['newPassword'] = newPassword;
+      if (oldPassword != null) data['oldPassword'] = oldPassword;
+      if (eMail != null) data['eMail'] = eMail;
+      data["id"] = id;
+
+      print("Request Body: $data");
+      print("AccessToken: $accessToken");
+
+      final response = await ApiClient().patch("/user/info", data: data);
+
+      print("Response Status: ${response.statusCode}");
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
+        return UserSettingsApi.fromJson(response.data);
       } else {
         throw Exception('Failed to update user settings');
       }
     } catch (e) {
-      print("failed with $e");
-      throw Exception("Failed to call api");
+      print("Failed with: $e");
+      throw Exception("Failed to call API");
     }
   }
 }

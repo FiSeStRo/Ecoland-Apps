@@ -43,7 +43,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     final navigator = Navigator.of(context);
                     if (_usernameController.text == "" ||
                         _passwordController.text == "") {
-                      //ToDo: Show error username or password can't be empty
+                      showCustomNotification(context,
+                          message: "Username or password can't be empty",
+                          type: NotificationType.error);
                       return;
                     }
                     try {
@@ -66,7 +68,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ElevatedButton(
                   onPressed: () {
                     final navigator = Navigator.of(context);
-                    navigator.pushNamed("/sign-up");
+                    navigator.pushNamed(Routes.signUp);
                   },
                   child: const Text("Sign Up here")),
             ],
