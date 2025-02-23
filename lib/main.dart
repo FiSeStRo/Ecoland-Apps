@@ -1,4 +1,6 @@
 import 'package:ecoland_application/navigation/routes.dart';
+import 'package:ecoland_application/providers/authentication_provider.dart';
+import 'package:ecoland_application/providers/buildings_provider.dart';
 import 'package:ecoland_application/providers/user_settings_provider.dart';
 import 'package:ecoland_application/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,9 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (context) => UserSettingsProvider())
+      ChangeNotifierProvider(create: (context) => AuthProvider()),
+      ChangeNotifierProvider(create: (context) => UserSettingsProvider()),
+      ChangeNotifierProvider(create: (context) => BuildingsProvider())
     ],
     child: const MyApp(),
   ));
@@ -16,7 +20,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

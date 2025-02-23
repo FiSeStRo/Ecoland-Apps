@@ -1,22 +1,21 @@
 import 'dart:convert';
-
-import 'package:http/http.dart';
-import './config.dart';
+import 'package:ecoland_application/providers/api/api.dart';
+import 'package:ecoland_application/providers/api/endpoints.dart';
 
 Future<bool> signUp(String username, String email, String password) async {
-  final url = '${AppConfig.baseUrl}/authentication/sign-up';
   try {
     final Map<String, dynamic> object = {
       'username': username,
       'email': email,
       'password': password,
     };
-    Response response = await post(Uri.parse(url), body: jsonEncode(object));
+    final response = await ApiClient()
+        .post(Endpoints.authentication.signUp, data: jsonEncode(object));
     if (response.statusCode == 201) {
       return true;
     } else {
       print(response.statusCode);
-      print(response.body);
+      print(response.data);
       return false;
     }
   } catch (e) {
