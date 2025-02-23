@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ecoland_application/providers/api/api.dart';
+import 'package:ecoland_application/providers/api/endpoints.dart';
 
 class UserSettingsApi {
   final String email;
@@ -23,7 +24,8 @@ class UserSettingsApi {
 
   static Future<UserSettingsApi> fetchUserSettings(int id) async {
     print("fetching userSettings from");
-    final response = await ApiClient().get('/user/info', query: {"id": id});
+    final response =
+        await ApiClient().get(Endpoints.user.info, query: {"id": id});
     if (response.statusCode != null &&
         response.statusCode! >= 200 &&
         response.statusCode! < 300) {
@@ -35,9 +37,7 @@ class UserSettingsApi {
     }
   }
 
-  static Future<UserSettingsApi> patchUserSettings(
-    String accessToken,
-    int id, {
+  static Future<UserSettingsApi> patchUserSettings({
     String? username,
     String? newPassword,
     String? oldPassword,
@@ -51,12 +51,10 @@ class UserSettingsApi {
       if (newPassword != null) data['newPassword'] = newPassword;
       if (oldPassword != null) data['oldPassword'] = oldPassword;
       if (eMail != null) data['eMail'] = eMail;
-      data["id"] = id;
 
       print("Request Body: $data");
-      print("AccessToken: $accessToken");
 
-      final response = await ApiClient().patch("/user/info", data: data);
+      final response = await ApiClient().patch(Endpoints.user.info, data: data);
 
       print("Response Status: ${response.statusCode}");
       if (response.statusCode != null &&

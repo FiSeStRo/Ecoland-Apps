@@ -13,10 +13,10 @@ class Routes {
   static const String production = '/production';
 
   static final Map<String, WidgetBuilder> routes = {
-    signUp: (context) => SignupScreen(),
-    signIn: (context) => SignInScreen(),
-    overview: (context) => OverviewScreen(),
-    userSettings: (context) => UserSettingsScreen(),
-    production: (context) => ProductionScreen()
+    signUp: (context) => const SignupScreen(),
+    signIn: (context) => const SignInScreen(),
+    overview: (context) => const OverviewScreen(),
+    userSettings: (context) => const UserSettingsScreen(),
+    production: (context) => const ProductionScreen()
   };
 }

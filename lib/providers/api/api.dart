@@ -23,13 +23,6 @@ class ApiClient {
         }
         return handler.next(options);
       },
-      onError: (DioException e, handler) async {
-        if (e.response?.statusCode == 401) {
-          //TODO: Add Refresh call
-          print('unathorized transaction');
-        }
-        return handler.next(e);
-      },
     ));
   }
 

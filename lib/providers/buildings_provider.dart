@@ -1,6 +1,5 @@
 import 'package:ecoland_application/models/building.dart';
 import 'package:ecoland_application/models/production.dart';
-import 'package:ecoland_application/providers/productions_provider.dart';
 import 'package:flutter/material.dart';
 
 class BuildingsProvider with ChangeNotifier {
