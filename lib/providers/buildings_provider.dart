@@ -1,5 +1,7 @@
 import 'package:ecoland_application/models/building.dart';
 import 'package:ecoland_application/models/production.dart';
+import 'package:ecoland_application/providers/api/api.dart';
+import 'package:ecoland_application/providers/api/endpoints.dart';
 import 'package:flutter/material.dart';
 
 class BuildingsProvider with ChangeNotifier {
@@ -48,4 +50,26 @@ class BuildingsProvider with ChangeNotifier {
 
   //Getters
   get buildings => _buildings;
+
+  Future<dynamic> getBuildingList() async {
+    try {
+      final response = await ApiClient().get(Endpoints.building.list);
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
+        final List<Building> fetchedBuildings = response.data['buildings']
+            .map<Building>((buildingData) => Building.fromJson(buildingData))
+            .toList();
+        _buildings.clear();
+        _buildings.addAll(fetchedBuildings);
+        notifyListeners();
+        return _buildings;
+      } else {
+        throw Exception('Failed to load buildings: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("getting building list failed with $e");
+      return _buildings;
+    }
+  }
 }

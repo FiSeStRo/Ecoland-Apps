@@ -1,6 +1,7 @@
 import 'package:ecoland_application/components/notification.dart';
 import 'package:ecoland_application/navigation/routes.dart';
 import 'package:ecoland_application/providers/authentication_provider.dart';
+import 'package:ecoland_application/providers/buildings_provider.dart';
 import 'package:ecoland_application/providers/user_settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     final userSettings = Provider.of<UserSettingsProvider>(context);
     final auth = Provider.of<AuthProvider>(context);
+    final building = Provider.of<BuildingsProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("SignIn"),
@@ -56,6 +58,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       if (data.id) {
                         userSettings.userName = _usernameController.text;
                         userSettings.id = data.id;
+                        building.getBuildingList();
                         navigator.popAndPushNamed(Routes.overview);
                       }
                     } catch (e) {
