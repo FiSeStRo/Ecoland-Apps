@@ -1,5 +1,5 @@
 import 'package:ecoland_application/components/building_card.dart';
-import 'package:ecoland_application/components/constructio_building.dart';
+import 'package:ecoland_application/components/construction_building.dart';
 import 'package:ecoland_application/models/building.dart';
 import 'package:ecoland_application/navigation/routes.dart';
 import 'package:ecoland_application/providers/buildings_provider.dart';

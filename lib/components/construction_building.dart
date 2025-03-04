@@ -77,7 +77,9 @@ class _ConstructBuildingDialogState extends State<ConstructBuildingDialog> {
                   ),
                 ],
               ),
-              Text("Cost\n1000\$", textAlign: TextAlign.center),
+              Text("Cost\n1000\$",
+                  textAlign: TextAlign
+                      .center), //ToDo add cost from selected construction
             ],
           ),
           SizedBox(height: 20),
