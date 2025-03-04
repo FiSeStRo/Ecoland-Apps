@@ -1,4 +1,5 @@
 import 'package:ecoland_application/components/building_card.dart';
+import 'package:ecoland_application/components/constructio_building.dart';
 import 'package:ecoland_application/models/building.dart';
 import 'package:ecoland_application/navigation/routes.dart';
 import 'package:ecoland_application/providers/buildings_provider.dart';
@@ -16,6 +17,7 @@ class OverviewScreen extends StatefulWidget {
 class _OverviewScreenState extends State<OverviewScreen> {
   @override
   Widget build(BuildContext context) {
+    int _selectedIndex = 0;
     final userSettings = Provider.of<UserSettingsProvider>(context);
     final buildingsP = Provider.of<BuildingsProvider>(context);
     final List<Building> buildings = buildingsP.buildings;
@@ -31,6 +33,27 @@ class _OverviewScreenState extends State<OverviewScreen> {
     }
 
     return Scaffold(
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.construction), label: 'build'),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[800],
+          onTap: (int index) {
+            switch (index) {
+              case 0:
+                print("Home clicked");
+              case 1:
+                //show construction Dialog
+                showConstructBuildingDialog(context);
+            }
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        ),
         appBar: AppBar(
           title: const Text("Ovierview"),
           actions: [

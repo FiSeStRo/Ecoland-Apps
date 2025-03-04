@@ -48,8 +48,10 @@ class BuildingsProvider with ChangeNotifier {
     ),
   ];
 
+  final List<ConBuilding> _constructions = [];
   //Getters
   get buildings => _buildings;
+  get constructions => _constructions;
 
   Future<dynamic> getBuildingList() async {
     try {
@@ -70,6 +72,22 @@ class BuildingsProvider with ChangeNotifier {
     } catch (e) {
       print("getting building list failed with $e");
       return _buildings;
+    }
+  }
+
+  Future<dynamic> getConstructionList() async {
+    try {
+      final response =
+          await ApiClient().get(Endpoints.building.constructionList);
+      final List<ConBuilding> fetchedConstructions = response.data['buildings']
+          .map((resData) => ConBuilding.fromJson(resData))
+          .toList();
+      _constructions.clear();
+      _constructions.addAll(fetchedConstructions);
+      notifyListeners();
+      return _constructions;
+    } catch (e) {
+      throw Exception("Failed to fetch Construction list");
     }
   }
 }

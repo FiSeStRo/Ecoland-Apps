@@ -33,3 +33,34 @@ class DefType {
     required this.tokenName,
   });
 }
+
+class ConBuilding {
+  final int id;
+  final String name;
+  final int cost;
+  final int time;
+
+  ConBuilding(
+      {required this.id,
+      required this.name,
+      required this.cost,
+      required this.time});
+
+  factory ConBuilding.fromJson(Map<String, dynamic> json) {
+    return ConBuilding(
+      id: json['def_id'],
+      name: json['token_name'],
+      cost: json['cost'],
+      time: json['time'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'cost': cost,
+      'iime': time,
+    };
+  }
+}
