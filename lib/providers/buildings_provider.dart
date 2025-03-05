@@ -5,7 +5,7 @@ import 'package:ecoland_application/providers/api/endpoints.dart';
 import 'package:flutter/material.dart';
 
 class BuildingsProvider with ChangeNotifier {
-  //TODo: Test Data to be replaced with call to get buildings
+  //* Test Data will be overrriten after first call succeedss keeping test data for testing
   final List<Building> _buildings = [
     Building(
       name: 'Farm',
@@ -88,6 +88,23 @@ class BuildingsProvider with ChangeNotifier {
       return _constructions;
     } catch (e) {
       throw Exception("Failed to fetch Construction list");
+    }
+  }
+
+  Future<dynamic> startConstruction(
+      {required int id,
+      required String name,
+      required int lan,
+      required int lat}) async {
+    try {
+      final response = await ApiClient().post(Endpoints.building.construct,
+          data: {'id': id, 'name': name, 'lan': lan, 'lat': lat});
+      if (response.statusCode == 201) {
+        await getBuildingList();
+      }
+      return response;
+    } catch (e) {
+      throw Exception("Failed to post new Construction $e");
     }
   }
 }

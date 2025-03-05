@@ -46,7 +46,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
               case 0:
                 print("Home clicked");
               case 1:
-                //show construction Dialog
                 showConstructBuildingDialog(context);
             }
             setState(() {
