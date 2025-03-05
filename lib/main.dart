@@ -2,6 +2,7 @@ import 'package:ecoland_application/navigation/routes.dart';
 import 'package:ecoland_application/providers/authentication_provider.dart';
 import 'package:ecoland_application/providers/buildings_provider.dart';
 import 'package:ecoland_application/providers/user_settings_provider.dart';
+import 'package:ecoland_application/screens/overview_screen.dart';
 import 'package:ecoland_application/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SignInScreen(),
+      home: const OverviewScreen(), //TODO: Change back to signIn before PR
       routes: Routes.routes,
     );
   }

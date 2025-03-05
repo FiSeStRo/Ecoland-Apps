@@ -5,7 +5,7 @@ import 'package:ecoland_application/providers/api/endpoints.dart';
 import 'package:flutter/material.dart';
 
 class BuildingsProvider with ChangeNotifier {
-  //TODo: Test Data to be replaced with call to get buildings
+  //* Test Data will be overrriten after first call succeedss keeping test data for testing
   final List<Building> _buildings = [
     Building(
       name: 'Farm',
@@ -48,8 +48,10 @@ class BuildingsProvider with ChangeNotifier {
     ),
   ];
 
+  final List<ConBuilding> _constructions = [];
   //Getters
   get buildings => _buildings;
+  get constructions => _constructions;
 
   Future<dynamic> getBuildingList() async {
     try {
@@ -70,6 +72,39 @@ class BuildingsProvider with ChangeNotifier {
     } catch (e) {
       print("getting building list failed with $e");
       return _buildings;
+    }
+  }
+
+  Future<dynamic> getConstructionList() async {
+    try {
+      final response =
+          await ApiClient().get(Endpoints.building.constructionList);
+      final List<ConBuilding> fetchedConstructions = response.data['buildings']
+          .map((resData) => ConBuilding.fromJson(resData))
+          .toList();
+      _constructions.clear();
+      _constructions.addAll(fetchedConstructions);
+      notifyListeners();
+      return _constructions;
+    } catch (e) {
+      throw Exception("Failed to fetch Construction list");
+    }
+  }
+
+  Future<dynamic> startConstruction(
+      {required int id,
+      required String name,
+      required int lan,
+      required int lat}) async {
+    try {
+      final response = await ApiClient().post(Endpoints.building.construct,
+          data: {'id': id, 'name': name, 'lan': lan, 'lat': lat});
+      if (response.statusCode == 201) {
+        await getBuildingList();
+      }
+      return response;
+    } catch (e) {
+      throw Exception("Failed to post new Construction $e");
     }
   }
 }
